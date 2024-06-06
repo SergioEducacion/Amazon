@@ -7,15 +7,17 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.amazon.ui.Pantalla1
+import com.example.amazon.ui.Pantalla2
 import com.example.amazon.ui.theme.AmazonTheme
 
 class MainActivity : ComponentActivity() {
@@ -42,21 +44,24 @@ enum class PrincipalScreen(@StringRes val title: Int) {
 
 @Composable
 fun Principal(navController: NavHostController = rememberNavController()) {
-    val viewModelTareas: AmazonViewModel = viewModel()
-    val uiState by viewModelTareas.uiState.collectAsState()
+    val viewModelAmazon: AmazonViewModel = viewModel()
+    val uiState by viewModelAmazon.uiState.collectAsState()
     NavHost(
         navController = navController,
         startDestination = PrincipalScreen.Pantalla1.name,
-        //modifier = Modifier.padding(innerPadding)
     ) {
         composable(route = PrincipalScreen.Pantalla1.name) {
-            PantallaTareas(
-                tareaViewModel = viewModelTareas,
+            Pantalla1(
+                viewModelAmazon = viewModelAmazon,
                 uiState = uiState,
-                onClickCambiarPantalla = { navController.navigate(PrincipalScreen.Pantalla2.name) })
+                onClickCambiarPantalla={navController.navigate(PrincipalScreen.Pantalla2.name) }
+            )
         }
         composable(route = PrincipalScreen.Pantalla2.name) {
-            PantallaVacia()
+            Pantalla2(  viewModelAmazon = viewModelAmazon,
+                uiState = uiState,
+                onClickCambiarPantalla={navController.navigate(PrincipalScreen.Pantalla1.name) }
+            )
         }
     }
 }
