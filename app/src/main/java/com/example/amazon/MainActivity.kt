@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.amazon.data.DataSource
 import com.example.amazon.ui.Pantalla1
 import com.example.amazon.ui.Pantalla2
 import com.example.amazon.ui.theme.AmazonTheme
@@ -46,6 +47,7 @@ enum class PrincipalScreen(@StringRes val title: Int) {
 fun Principal(navController: NavHostController = rememberNavController()) {
     val viewModelAmazon: AmazonViewModel = viewModel()
     val uiState by viewModelAmazon.uiState.collectAsState()
+    var productosOriginales = DataSource.productos
     NavHost(
         navController = navController,
         startDestination = PrincipalScreen.Pantalla1.name,
@@ -54,13 +56,17 @@ fun Principal(navController: NavHostController = rememberNavController()) {
             Pantalla1(
                 viewModelAmazon = viewModelAmazon,
                 uiState = uiState,
-                onClickCambiarPantalla={navController.navigate(PrincipalScreen.Pantalla2.name) }
+                productosOriginales=productosOriginales,
+                onClickCambiarPantalla={ viewModelAmazon.inicializarAccionEliminar();
+                    navController.navigate(PrincipalScreen.Pantalla2.name) }
             )
         }
         composable(route = PrincipalScreen.Pantalla2.name) {
             Pantalla2(  viewModelAmazon = viewModelAmazon,
                 uiState = uiState,
-                onClickCambiarPantalla={navController.navigate(PrincipalScreen.Pantalla1.name) }
+                onClickCambiarPantalla={
+                    viewModelAmazon.inicializarAccionAdd();
+                    navController.navigate(PrincipalScreen.Pantalla1.name) }
             )
         }
     }
